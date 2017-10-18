@@ -179,6 +179,7 @@ export default class AutoHeightWebView extends PureComponent {
   }
 
   onMessage(e) {
+    this.handleOnMessage && this.props.handleOnMessage(e)
     this.props.handleOnMessage(e)
     const height = parseInt(
       IsBelowKitKat ? e.nativeEvent.message : e.nativeEvent.data
