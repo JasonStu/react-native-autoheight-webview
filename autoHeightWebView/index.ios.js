@@ -18,6 +18,7 @@ export default class AutoHeightWebView extends PureComponent {
         hasIframe: PropTypes.bool,
         source: WebView.propTypes.source,
         onHeightUpdated: PropTypes.func,
+        handleOnMessage: PropTypes.func,
         customScript: PropTypes.string,
         enableAnimation: PropTypes.bool,
         // if set to true may cause some layout issues (smaller font size)
@@ -45,6 +46,7 @@ export default class AutoHeightWebView extends PureComponent {
     constructor(props) {
         super(props);
         this.handleNavigationStateChange = this.handleNavigationStateChange.bind(this);
+        this.handleOnMessage = this.handleOnMessage.bind(this)
         if (this.props.enableAnimation) {
             this.opacityAnimatedValue = new Animated.Value(0);
         }
@@ -85,6 +87,12 @@ export default class AutoHeightWebView extends PureComponent {
             this.props.onHeightUpdated(height);
         }
     }
+    handleOnMessage(event) {
+        console.log('handleOnMessage', this.props);
+        if (this.props.handleOnMessage) {
+            this.props.handleOnMessage(event)
+        }
+    }
 
     handleNavigationStateChange(navState) {
         const height = Number(navState.title);
@@ -121,7 +129,9 @@ export default class AutoHeightWebView extends PureComponent {
                     scrollEnabled={false}
                     scalesPageToFit={scalesPageToFit}
                     source={webViewSource}
-                    onNavigationStateChange={this.handleNavigationStateChange} />
+                    onNavigationStateChange={this.handleNavigationStateChange}
+                    onMessage={this.handleOnMessage}
+                />
             </Animated.View>
         );
     }
@@ -142,7 +152,7 @@ const Styles = StyleSheet.create({
 
 const BaseScript =
     `
-    ; 
+    ;
     (function () {
         var i = 0;
         var height = 0;
@@ -167,7 +177,7 @@ const BaseScript =
 
 const IframeBaseScript =
     `
-    ; 
+    ;
     (function () {
         var i = 0;
         var height = 0;

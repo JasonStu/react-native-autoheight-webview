@@ -30,6 +30,7 @@ export default class AutoHeightWebView extends PureComponent {
   static propTypes = {
     source: WebView.propTypes.source,
     onHeightUpdated: PropTypes.func,
+    handleOnMessage: PropTypes.func,
     customScript: PropTypes.string,
     enableAnimation: PropTypes.bool,
     // if set to false may cause some layout issues (width of container will be than width of screen)
@@ -178,6 +179,7 @@ export default class AutoHeightWebView extends PureComponent {
   }
 
   onMessage(e) {
+    this.props.handleOnMessage(e)
     const height = parseInt(
       IsBelowKitKat ? e.nativeEvent.message : e.nativeEvent.data
     );
@@ -296,12 +298,12 @@ const BaseScript = IsBelowKitKat
         AutoHeightWebView.onMessage = function (message) {
             AutoHeightWebView.send(String(document.body.offsetHeight));
         };
-    } ()); 
+    } ());
     `
   : `
     ; (function () {
         document.addEventListener('message', function (e) {
             window.postMessage(String(document.body.offsetHeight));
         });
-    } ()); 
+    } ());
     `;
